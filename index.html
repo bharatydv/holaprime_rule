@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trading Rules | Hola Prime</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #060b14;
@@ -30,7 +30,7 @@
       linear-gradient(90deg, rgba(0,200,255,0.03) 1px, transparent 1px);
     background-size: 48px 48px;
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 15px;
     line-height: 1.6;
     min-height: 100vh;
@@ -52,7 +52,7 @@
   }
 
   .logo {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 800;
     font-size: 20px;
     letter-spacing: -0.5px;
@@ -109,7 +109,7 @@
   .tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 
   h1 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: clamp(36px, 5vw, 64px);
     font-weight: 800;
     line-height: 1.05;
@@ -121,6 +121,7 @@
 
   .hero-sub {
     font-size: 16px;
+    font-weight: 400;
     color: var(--muted);
     max-width: 520px;
     margin-bottom: 40px;
@@ -138,7 +139,7 @@
   }
 
   .tab-btn {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 13px;
     font-weight: 700;
     padding: 10px 20px;
@@ -187,7 +188,7 @@
 
   .kpi-label {
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.8px;
     color: var(--muted);
@@ -195,7 +196,7 @@
   }
 
   .kpi-value {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 26px;
     font-weight: 800;
     color: #fff;
@@ -208,13 +209,14 @@
 
   .kpi-sub {
     font-size: 11px;
+    font-weight: 400;
     color: var(--muted);
     margin-top: 4px;
   }
 
   /* SECTION TITLE */
   .section-label {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
@@ -254,7 +256,7 @@
   thead th {
     padding: 14px 20px;
     text-align: left;
-    font-family: 'Syne', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
@@ -277,13 +279,15 @@
   tbody td {
     padding: 16px 20px;
     font-size: 14px;
+    font-weight: 400;
     color: var(--text);
     vertical-align: middle;
   }
   tbody td:not(:first-child) { text-align: center; }
 
   .rule-name {
-    font-weight: 500;
+    font-weight: 700;
+    font-size: 14px;
     color: #fff;
     display: flex;
     align-items: center;
@@ -292,6 +296,7 @@
 
   .rule-desc {
     font-size: 12px;
+    font-weight: 400;
     color: var(--muted);
     margin-top: 2px;
   }
@@ -300,18 +305,18 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Syne', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 13px;
     font-weight: 700;
     padding: 4px 12px;
     border-radius: 6px;
     min-width: 64px;
   }
-  .badge.green { background: rgba(77,242,160,0.12); color: var(--green); }
-  .badge.red { background: rgba(242,95,77,0.12); color: var(--red); }
-  .badge.yellow { background: rgba(242,201,76,0.12); color: var(--yellow); }
+  .badge.green { background: rgba(0,229,160,0.12); color: var(--green); }
+  .badge.red { background: rgba(255,77,106,0.12); color: var(--red); }
+  .badge.yellow { background: rgba(255,183,77,0.12); color: var(--yellow); }
   .badge.accent { background: rgba(0,200,255,0.12); color: var(--accent); }
-  .badge.muted { background: rgba(107,114,128,0.12); color: var(--muted); }
+  .badge.muted { background: rgba(90,122,153,0.12); color: var(--muted); }
   .badge.white { background: rgba(255,255,255,0.07); color: var(--text); }
 
   .check { color: var(--green); font-size: 18px; }
@@ -339,12 +344,12 @@
 
   .info-card {
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 1px solid rgba(0,200,255,0.10);
     border-radius: 14px;
     padding: 24px;
     transition: border-color .2s;
   }
-  .info-card:hover { border-color: rgba(255,255,255,0.13); }
+  .info-card:hover { border-color: rgba(0,200,255,0.25); }
 
   .info-card-icon {
     width: 40px; height: 40px;
@@ -357,7 +362,7 @@
   }
 
   .info-card h3 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 15px;
     font-weight: 700;
     color: #fff;
@@ -366,6 +371,7 @@
 
   .info-card p {
     font-size: 13.5px;
+    font-weight: 400;
     color: var(--muted);
     line-height: 1.65;
   }
@@ -393,7 +399,7 @@
   .prohibited-item .icon-wrap {
     width: 32px; height: 32px;
     border-radius: 8px;
-    background: rgba(242,95,77,0.1);
+    background: rgba(255,77,106,0.1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -405,12 +411,13 @@
   .prohibited-item .text strong {
     display: block;
     font-size: 13.5px;
-    font-weight: 600;
+    font-weight: 700;
     color: #fff;
     margin-bottom: 3px;
   }
   .prohibited-item .text span {
     font-size: 12px;
+    font-weight: 400;
     color: var(--muted);
     line-height: 1.5;
   }
@@ -433,10 +440,11 @@
   }
   .leverage-chip .asset {
     font-size: 13px;
+    font-weight: 400;
     color: var(--muted);
   }
   .leverage-chip .ratio {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 16px;
     font-weight: 700;
     color: var(--accent);
@@ -460,8 +468,8 @@
   .consequence-strip {
     display: flex;
     gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
+    background: rgba(0,200,255,0.08);
+    border: 1px solid rgba(0,200,255,0.12);
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 32px;
@@ -473,7 +481,7 @@
     text-align: center;
   }
   .consequence-item .num {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 24px;
     font-weight: 800;
     color: #fff;
@@ -484,16 +492,17 @@
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   /* FOOTER NOTE */
   .footnote {
     font-size: 12px;
+    font-weight: 400;
     color: var(--muted);
     padding: 20px;
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 1px solid rgba(0,200,255,0.08);
     border-radius: 12px;
     line-height: 1.7;
   }
@@ -524,6 +533,7 @@
   <div class="tag">Trading Objectives</div>
   <h1>Clear rules.<br><em>No surprises.</em></h1>
   <p class="hero-sub">Every rule, limit, and objective — laid out upfront. Know exactly what you need to pass and what to avoid before you trade a single lot.</p>
+  <a href="#" style="display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--bg);font-family:'Inter',sans-serif;font-weight:700;font-size:14px;padding:12px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.3px;box-shadow:0 0 24px rgba(0,200,255,0.3);transition:box-shadow .2s">Get Funded → </a>
 </div>
 
 <!-- CHALLENGE TABS -->
