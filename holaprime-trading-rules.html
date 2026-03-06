@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Rules | Hola Prime</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #060b14;
+    --surface: #0d1520;
+    --surface2: #111d2e;
+    --border: rgba(0,200,255,0.10);
+    --accent: #00c8ff;
+    --text: #e6f0ff;
+    --muted: #5a7a99;
+    --red: #ff4d6a;
+    --green: #00e5a0;
+    --yellow: #ffb74d;
+  }
+
+  body {
+    background: var(--bg);
+    background-image:
+      linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ─────────────────────────────── */
+  header {
+    position: sticky; top: 0; z-index: 200;
+    background: rgba(6,11,20,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,200,255,0.12);
+    padding: 0 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .logo { font-weight: 800; font-size: 20px; color: #fff; letter-spacing: -0.5px; }
+  .logo span { color: var(--accent); }
+
+  nav { display: flex; gap: 6px; }
+  .nav-pill {
+    font-size: 13px; font-weight: 500; color: var(--muted);
+    padding: 6px 14px; border-radius: 20px; cursor: pointer;
+    transition: all .2s; border: 1px solid transparent; background: none;
+  }
+  .nav-pill:hover { color: var(--text); border-color: var(--border); }
+  .nav-pill.active { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+
+  /* ── HERO ────────────────────────────────── */
+  .hero {
+    padding: 72px 40px 52px; max-width: 1200px; margin: 0 auto; position: relative;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: 0; left: -200px;
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse at center, rgba(0,144,255,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,200,255,0.1); border: 1px solid rgba(0,200,255,0.25);
+    border-radius: 20px; padding: 5px 14px;
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    letter-spacing: 0.9px; text-transform: uppercase; margin-bottom: 22px;
+  }
+  .tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  h1 {
+    font-size: clamp(34px, 5vw, 60px); font-weight: 800;
+    line-height: 1.05; letter-spacing: -2px; color: #fff; margin-bottom: 14px;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+  .hero-sub {
+    font-size: 15px; font-weight: 400; color: var(--muted);
+    max-width: 500px; margin-bottom: 36px; line-height: 1.7;
+  }
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent); color: var(--bg);
+    font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px;
+    padding: 12px 24px; border-radius: 8px; text-decoration: none;
+    letter-spacing: 0.3px; box-shadow: 0 0 24px rgba(0,200,255,0.28);
+    transition: box-shadow .2s, transform .15s;
+  }
+  .cta-btn:hover { box-shadow: 0 0 36px rgba(0,200,255,0.4); transform: translateY(-1px); }
+
+  /* ── TABS ────────────────────────────────── */
+  .challenge-tabs {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    padding: 0 40px; max-width: 1200px; margin: 0 auto 36px;
+  }
+  .tab-btn {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+    padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--muted); cursor: pointer;
+    transition: all .2s; letter-spacing: 0.2px;
+  }
+  .tab-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+  .tab-btn.active {
+    background: var(--accent); color: var(--bg);
+    border-color: var(--accent); box-shadow: 0 0 16px rgba(0,200,255,0.25);
+  }
+
+  /* ── CONTENT ─────────────────────────────── */
+  .content { max-width: 1200px; margin: 0 auto; padding: 0 40px 80px; }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── KPI STRIP ───────────────────────────── */
+  .kpi-strip {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px; background: rgba(0,200,255,0.08);
+    border: 1px solid rgba(0,200,255,0.15); border-radius: 14px;
+    overflow: hidden; margin-bottom: 32px;
+  }
+  .kpi-card { background: var(--surface); padding: 22px 20px; transition: background .2s; }
+  .kpi-card:hover { background: var(--surface2); }
+  .kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.9px; color: var(--muted); margin-bottom: 7px; }
+  .kpi-value { font-size: 24px; font-weight: 800; color: #fff; line-height: 1.1; }
+  .kpi-value.accent { color: var(--accent); }
+  .kpi-value.red { color: var(--red); }
+  .kpi-value.green { color: var(--green); }
+  .kpi-value.yellow { color: var(--yellow); }
+  .kpi-sub { font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 4px; }
+
+  /* ── SECTION LABEL ───────────────────────── */
+  .section-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--accent); opacity: 0.85;
+    margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: rgba(0,200,255,0.12); }
+
+  /* ── RULES TABLE ─────────────────────────── */
+  .rules-table-wrap {
+    border: 1px solid rgba(0,200,255,0.12); border-radius: 14px;
+    overflow: visible; margin-bottom: 32px;
+    position: relative;
+  }
+  table { width: 100%; border-collapse: collapse; border-radius: 14px; overflow: hidden; }
+  thead tr { background: rgba(0,200,255,0.05); }
+  thead th {
+    padding: 13px 20px; text-align: left;
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.9px; color: var(--accent); opacity: 0.7;
+    border-bottom: 1px solid rgba(0,200,255,0.10);
+  }
+  thead th:not(:first-child) { text-align: center; }
+  tbody tr {
+    background: var(--surface); border-bottom: 1px solid rgba(0,200,255,0.07);
+    transition: background .15s; position: relative;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td { padding: 15px 20px; font-size: 14px; font-weight: 400; color: var(--text); vertical-align: middle; }
+  tbody td:not(:first-child) { text-align: center; }
+
+  .rule-name { font-weight: 700; font-size: 14px; color: #fff; display: flex; align-items: center; gap: 10px; }
+  .rule-desc { font-size: 12px; font-weight: 400; color: var(--muted); margin-top: 3px; }
+
+  .badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; padding: 4px 12px;
+    border-radius: 6px; min-width: 60px;
+  }
+  .badge.green { background: rgba(0,229,160,0.12); color: var(--green); }
+  .badge.red { background: rgba(255,77,106,0.12); color: var(--red); }
+  .badge.yellow { background: rgba(255,183,77,0.12); color: var(--yellow); }
+  .badge.accent { background: rgba(0,200,255,0.12); color: var(--accent); }
+  .badge.muted { background: rgba(90,122,153,0.10); color: var(--muted); }
+  .badge.white { background: rgba(255,255,255,0.07); color: var(--text); }
+  .check { color: var(--green); font-size: 17px; }
+  .cross { color: var(--red); font-size: 17px; }
+
+  /* ── CHART TOOLTIP SYSTEM ─────────────────── */
+  .chart-btn {
+    background: rgba(0,200,255,0.08); border: 1px solid rgba(0,200,255,0.18);
+    border-radius: 6px; width: 30px; height: 28px;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all .2s; color: var(--accent); font-size: 13px;
+    flex-shrink: 0;
+  }
+  .chart-btn:hover { background: rgba(0,200,255,0.16); border-color: var(--accent); }
+  .chart-btn svg { width: 14px; height: 14px; stroke: var(--accent); fill: none; stroke-width: 2; }
+
+  .chart-popup {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    width: 340px;
+    background: #0d1929;
+    border: 1px solid rgba(0,200,255,0.20);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 40px rgba(0,200,255,0.08);
+    pointer-events: none;
+  }
+  .chart-popup.visible { display: block; animation: popIn .18s ease; }
+  @keyframes popIn { from { opacity: 0; transform: translateY(6px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+  .chart-popup h4 {
+    font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px;
+  }
+  .chart-popup .chart-desc {
+    font-size: 11px; font-weight: 400; color: var(--muted); margin-bottom: 14px; line-height: 1.5;
+  }
+  .chart-popup canvas { width: 100% !important; display: block; }
+  .chart-legend {
+    display: flex; gap: 14px; margin-top: 12px; flex-wrap: wrap;
+  }
+  .chart-legend-item {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 400; color: var(--muted);
+  }
+  .chart-legend-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  /* ── LEVERAGE CHIPS ──────────────────────── */
+  .leverage-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+  .leverage-chip {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface); border: 1px solid rgba(0,200,255,0.10);
+    border-radius: 8px; padding: 10px 16px;
+  }
+  .leverage-chip .asset { font-size: 13px; font-weight: 400; color: var(--muted); }
+  .leverage-chip .ratio { font-size: 16px; font-weight: 700; color: var(--accent); }
+
+  /* ── PROHIBITED ──────────────────────────── */
+  .prohibited-list {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 10px; margin-bottom: 32px;
+  }
+  .prohibited-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: var(--surface); border: 1px solid rgba(0,200,255,0.08);
+    border-radius: 10px; padding: 16px;
+    transition: border-color .2s;
+  }
+  .prohibited-item:hover { border-color: rgba(255,77,106,0.2); }
+  .prohibited-item .icon-wrap {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(255,77,106,0.10); display: flex; align-items: center;
+    justify-content: center; font-size: 14px; flex-shrink: 0; margin-top: 1px;
+  }
+  .prohibited-item .text strong { display: block; font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+  .prohibited-item .text span { font-size: 12px; font-weight: 400; color: var(--muted); line-height: 1.5; }
+
+  /* ── CONSEQUENCE ─────────────────────────── */
+  .consequence-strip {
+    display: flex; gap: 1px;
+    background: rgba(0,200,255,0.08); border: 1px solid rgba(0,200,255,0.12);
+    border-radius: 12px; overflow: hidden; margin-bottom: 32px;
+  }
+  .consequence-item { flex: 1; background: var(--surface); padding: 20px; text-align: center; }
+  .consequence-item .cicon { font-size: 22px; margin-bottom: 6px; }
+  .consequence-item .clabel { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── INFO CARDS ──────────────────────────── */
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .info-card {
+    background: var(--surface); border: 1px solid rgba(0,200,255,0.10);
+    border-radius: 14px; padding: 22px; transition: border-color .2s;
+  }
+  .info-card:hover { border-color: rgba(0,200,255,0.25); }
+  .info-card-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; margin-bottom: 12px; }
+  .info-card h3 { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 7px; }
+  .info-card p { font-size: 13px; font-weight: 400; color: var(--muted); line-height: 1.65; }
+  .info-card strong { color: var(--text); }
+
+  /* ── FOOTNOTE ────────────────────────────── */
+  .footnote {
+    font-size: 12px; font-weight: 400; color: var(--muted);
+    padding: 18px; background: var(--surface);
+    border: 1px solid rgba(0,200,255,0.08); border-radius: 12px; line-height: 1.7;
+  }
+  .footnote strong { color: var(--text); }
+
+  @media (max-width: 768px) {
+    header, .hero, .challenge-tabs, .content { padding-left: 20px; padding-right: 20px; }
+    .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+    .consequence-strip { flex-direction: column; }
+    h1 { letter-spacing: -1px; }
+    .chart-popup { width: 290px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Hola<span>Prime</span></div>
+  <nav>
+    <button class="nav-pill active">Forex</button>
+    <button class="nav-pill">Futures</button>
+    <button class="nav-pill">Prohibited</button>
+  </nav>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="tag">Trading Objectives</div>
+  <h1>Clear rules.<br><em>No surprises.</em></h1>
+  <p class="hero-sub">Every rule, limit, and objective laid out upfront. Know exactly what you need to pass — and what to avoid — before you trade a single lot.</p>
+  <a class="cta-btn" href="#">Get Funded →</a>
+</div>
+
+<!-- TABS -->
+<div class="challenge-tabs">
+  <button class="tab-btn active" onclick="switchTab('pro1')">Pro 1-Step</button>
+  <button class="tab-btn" onclick="switchTab('pro2')">Pro 2-Step</button>
+  <button class="tab-btn" onclick="switchTab('prime1')">Prime 1-Step</button>
+  <button class="tab-btn" onclick="switchTab('prime2')">Prime 2-Step</button>
+  <button class="tab-btn" onclick="switchTab('prime3')">Prime 3-Step</button>
+  <button class="tab-btn" onclick="switchTab('direct')">Direct Account</button>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- ═══════════ PRO 1-STEP ═══════════ -->
+<div id="panel-pro1" class="panel active">
+  <div class="kpi-strip">
+    <div class="kpi-card"><div class="kpi-label">Profit Target</div><div class="kpi-value accent">10%</div><div class="kpi-sub">Phase 1 only</div></div>
+    <div class="kpi-card"><div class="kpi-label">Max Daily Loss</div><div class="kpi-value red">5%</div><div class="kpi-sub">From prev. close</div></div>
+    <div class="kpi-card"><div class="kpi-label">Max Overall Loss</div><div class="kpi-value red">6%</div><div class="kpi-sub">From initial balance</div></div>
+    <div class="kpi-card"><div class="kpi-label">Min Trading Days</div><div class="kpi-value yellow">2</div><div class="kpi-sub">Calendar days</div></div>
+    <div class="kpi-card"><div class="kpi-label">Time Limit</div><div class="kpi-value green">None</div><div class="kpi-sub">Unlimited</div></div>
+    <div class="kpi-card"><div class="kpi-label">Profit Split</div><div class="kpi-value accent">95%</div><div class="kpi-sub">On funded account</div></div>
+    <div class="kpi-card"><div class="kpi-label">Max Leverage</div><div class="kpi-value" style="color:#fff">100:1</div><div class="kpi-sub">Forex majors</div></div>
+  </div>
+
+  <div class="section-label">Evaluation Objectives — Phase 1 &amp; Funded</div>
+  <div class="rules-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:38%">Rule</th>
+          <th>Phase 1</th>
+          <th>Funded</th>
+          <th>Breach Type</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="rule-name">📈 Profit Target</div><div class="rule-desc">Net profit as % of starting balance</div></td>
+          <td><span class="badge accent">10%</span></td>
+          <td><span class="badge muted">None</span></td>
+          <td><span class="badge muted">Objective</span></td>
+          <td><button class="chart-btn" onclick="showChart(event,'profit-target-1step')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td>
+        </tr>
+        <tr>
+          <td><div class="rule-name">📉 Max Daily Loss</div><div class="rule-desc">Max loss in one day from prev. closing balance</div></td>
+          <td><span class="badge red">5%</span></td>
+          <td><span class="badge red">5%</span></td>
+          <td><span class="badge red">Hard Breach</span></td>
+          <td><button class="chart-btn" onclick="showChart(event,'daily-loss')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td>
+        </tr>
+        <tr>
+          <td><div class="rule-name">🔻 Max Overall Loss</div><div class="rule-desc">Balance can never fall below initial minus 6%</div></td>
+          <td><span class="badge red">6%</span></td>
+          <td><span class="badge red">6%</span></td>
+          <td><span class="badge red">Hard Breach</span></td>
+          <td><button class="chart-btn" onclick="showChart(event,'overall-loss-6')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td>
+        </tr>
+        <tr>
+          <td><div class="rule-name">📅 Min Trading Days</div><div class="rule-desc">Days with at least one opened/closed trade</div></td>
+          <td><span class="badge yellow">2 days</span></td>
+          <td><span class="badge muted">N/A</span></td>
+          <td><span class="badge yellow">Soft</span></td>
+          <td><button class="chart-btn" onclick="showChart(event,'min-days')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td>
+        </tr>
+        <tr>
+          <td><div class="rule-name">🔁 Max Risk / Trade Idea</div><div class="rule-desc">Funded: max loss per trade idea or correlated group</div></td>
+          <td><span class="badge muted">N/A</span></td>
+          <td><span class="badge red">2%</span></td>
+          <td><span class="badge red">Hard Breach</span></td>
+          <td><button class="chart-btn" onclick="showChart(event,'risk-per-trade')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td>
+        </tr>
+        <tr>
+          <td><div class="rule-name">📊 Consistency Rule</div><div class="rule-desc">Best single day ÷ total profit must stay ≤ 15%</div></td>
+          <td><span class="badge muted">N/A</span></td>
+          <td><span class="badge yellow">≤ 15%</span></td>
+          <td><span class="badge yellow">Payout Gate</span></td>
+          <td><button class="chart-btn" onclick="showChart(event,'consistency')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td>
+        </tr>
+        <tr>
+          <td><div class="rule-name">💤 Inactivity</div><div class="rule-desc">Account suspended after 30 consecutive inactive days</div></td>
+          <td><span class="badge red">30 days</span></td>
+          <td><span class="badge red">30 days</span></td>
+          <td><span class="badge red">Suspension</span></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">Trading Permissions</div>
+  <div class="rules-table-wrap">
+    <table>
+      <thead><tr><th style="width:40%">Feature</th><th>Challenge</th><th>Funded</th></tr></thead>
+      <tbody>
+        <tr><td><div class="rule-name">📰 News Trading</div></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td></tr>
+        <tr><td><div class="rule-name">🌙 Weekend Holding</div></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td></tr>
+        <tr><td><div class="rule-name">🤖 EAs / Bots</div><div class="rule-desc">Own accounts only — must obey all rules</div></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td><div class="rule-name">🔄 Copy Trading</div><div class="rule-desc">Only from your own Hola Prime accounts</div></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td><div class="rule-name">🌗 Hedging</div></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td></tr>
+        <tr><td><div class="rule-name">⚡ Payout Speed</div></td><td>—</td><td><span class="badge green">1 Hour</span></td></tr>
+        <tr><td><div class="rule-name">💸 Payout Frequency</div></td><td>—</td><td>Every 14 days</td></tr>
+        <tr><td><div class="rule-name">📈 Scaling Plan</div></td><td>—</td><td>Up to $4M</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">Leverage by Instrument</div>
+  <div class="leverage-chips">
+    <div class="leverage-chip"><span class="asset">Forex Majors & Minors</span><span class="ratio">100:1</span></div>
+    <div class="leverage-chip"><span class="asset">Forex Exotics</span><span class="ratio">5:1</span></div>
+    <div class="leverage-chip"><span class="asset">Metals</span><span class="ratio">10:1</span></div>
+    <div class="leverage-chip"><span class="asset">Commodities</span><span class="ratio">2:1</span></div>
+    <div class="leverage-chip"><span class="asset">Indices</span><span class="ratio">5:1</span></div>
+    <div class="leverage-chip"><span class="asset">Crypto</span><span class="ratio">1:1</span></div>
+  </div>
+</div>
+
+<!-- ═══════════ PRO 2-STEP ═══════════ -->
+<div id="panel-pro2" class="panel">
+  <div class="kpi-strip">
+    <div class="kpi-card"><div class="kpi-label">Phase 1 Target</div><div class="kpi-value accent">8%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Phase 2 Target</div><div class="kpi-value accent">5%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Max Daily Loss</div><div class="kpi-value red">5%</div><div class="kpi-sub">Both phases</div></div>
+    <div class="kpi-card"><div class="kpi-label">Max Overall Loss</div><div class="kpi-value red">8%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Min Trading Days</div><div class="kpi-value yellow">3</div><div class="kpi-sub">Per phase</div></div>
+    <div class="kpi-card"><div class="kpi-label">Time Limit</div><div class="kpi-value green">None</div></div>
+    <div class="kpi-card"><div class="kpi-label">Profit Split</div><div class="kpi-value accent">95%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Leverage</div><div class="kpi-value" style="color:#fff">100:1</div></div>
+  </div>
+  <div class="section-label">Evaluation Objectives</div>
+  <div class="rules-table-wrap">
+    <table>
+      <thead><tr><th style="width:30%">Rule</th><th>Phase 1</th><th>Phase 2</th><th>Funded</th><th>Breach</th><th></th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="rule-name">📈 Profit Target</div></td>
+          <td><span class="badge accent">8%</span></td><td><span class="badge accent">5%</span></td><td><span class="badge muted">None</span></td><td><span class="badge muted">Objective</span></td>
+          <td><button class="chart-btn" onclick="showChart(event,'profit-target-2step')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td>
+        </tr>
+        <tr>
+          <td><div class="rule-name">📉 Daily Loss</div></td>
+          <td><span class="badge red">5%</span></td><td><span class="badge red">5%</span></td><td><span class="badge red">5%</span></td><td><span class="badge red">Hard</span></td>
+          <td><button class="chart-btn" onclick="showChart(event,'daily-loss')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td>
+        </tr>
+        <tr>
+          <td><div class="rule-name">🔻 Max Overall Loss</div></td>
+          <td><span class="badge red">8%</span></td><td><span class="badge red">8%</span></td><td><span class="badge red">8%</span></td><td><span class="badge red">Hard</span></td>
+          <td><button class="chart-btn" onclick="showChart(event,'overall-loss-8')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td>
+        </tr>
+        <tr>
+          <td><div class="rule-name">📅 Min Trading Days</div></td>
+          <td><span class="badge yellow">3</span></td><td><span class="badge yellow">3</span></td><td><span class="badge muted">N/A</span></td><td><span class="badge yellow">Soft</span></td>
+          <td><button class="chart-btn" onclick="showChart(event,'min-days')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td>
+        </tr>
+        <tr>
+          <td><div class="rule-name">🔁 Risk / Trade Idea</div></td>
+          <td><span class="badge muted">N/A</span></td><td><span class="badge muted">N/A</span></td><td><span class="badge red">2%</span></td><td><span class="badge red">Hard</span></td>
+          <td><button class="chart-btn" onclick="showChart(event,'risk-per-trade')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td>
+        </tr>
+        <tr>
+          <td><div class="rule-name">📊 Consistency</div></td>
+          <td><span class="badge muted">N/A</span></td><td><span class="badge muted">N/A</span></td><td><span class="badge yellow">≤15%</span></td><td><span class="badge yellow">Payout Gate</span></td>
+          <td><button class="chart-btn" onclick="showChart(event,'consistency')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="section-label">Leverage by Instrument</div>
+  <div class="leverage-chips">
+    <div class="leverage-chip"><span class="asset">Forex Majors & Minors</span><span class="ratio">100:1</span></div>
+    <div class="leverage-chip"><span class="asset">Forex Exotics</span><span class="ratio">5:1</span></div>
+    <div class="leverage-chip"><span class="asset">Metals</span><span class="ratio">10:1</span></div>
+    <div class="leverage-chip"><span class="asset">Commodities</span><span class="ratio">2:1</span></div>
+    <div class="leverage-chip"><span class="asset">Indices</span><span class="ratio">5:1</span></div>
+    <div class="leverage-chip"><span class="asset">Crypto</span><span class="ratio">1:1</span></div>
+  </div>
+</div>
+
+<!-- ═══════════ PRIME 1-STEP ═══════════ -->
+<div id="panel-prime1" class="panel">
+  <div class="kpi-strip">
+    <div class="kpi-card"><div class="kpi-label">Profit Target</div><div class="kpi-value accent">10%</div><div class="kpi-sub">Single phase</div></div>
+    <div class="kpi-card"><div class="kpi-label">Max Daily Loss</div><div class="kpi-value red">5%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Max Overall Loss</div><div class="kpi-value red">6%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Min Trading Days</div><div class="kpi-value yellow">2</div></div>
+    <div class="kpi-card"><div class="kpi-label">Time Limit</div><div class="kpi-value green">None</div></div>
+    <div class="kpi-card"><div class="kpi-label">Profit Split</div><div class="kpi-value accent">95%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Leverage</div><div class="kpi-value" style="color:#fff">30:1</div><div class="kpi-sub">Forex majors</div></div>
+  </div>
+  <div class="section-label">Key Advantages over Pro</div>
+  <div class="info-grid">
+    <div class="info-card"><div class="info-card-icon" style="background:rgba(0,200,255,0.10)">📰</div><h3>Unrestricted News Trading</h3><p>Trade through high-impact news events in both phases and funded accounts — <strong>no blackout windows</strong>.</p></div>
+    <div class="info-card"><div class="info-card-icon" style="background:rgba(0,229,160,0.10)">🌙</div><h3>Weekend Position Holding</h3><p>Keep trades open over weekends with no mandatory close-outs. <strong>Trade on your timeline.</strong></p></div>
+    <div class="info-card"><div class="info-card-icon" style="background:rgba(255,183,77,0.10)">🎯</div><h3>All Strategies Allowed</h3><p>Scalping, swing, algorithmic — <strong>every style is welcome</strong> as long as prohibited practices are avoided.</p></div>
+  </div>
+  <div class="section-label">Evaluation Objectives</div>
+  <div class="rules-table-wrap">
+    <table>
+      <thead><tr><th style="width:38%">Rule</th><th>Phase 1</th><th>Funded</th><th>Breach</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><div class="rule-name">📈 Profit Target</div><div class="rule-desc">Net profit as % of starting balance</div></td><td><span class="badge accent">10%</span></td><td><span class="badge muted">None</span></td><td><span class="badge muted">Objective</span></td><td><button class="chart-btn" onclick="showChart(event,'profit-target-1step')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">📉 Max Daily Loss</div></td><td><span class="badge red">5%</span></td><td><span class="badge red">5%</span></td><td><span class="badge red">Hard</span></td><td><button class="chart-btn" onclick="showChart(event,'daily-loss')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">🔻 Max Overall Loss</div></td><td><span class="badge red">6%</span></td><td><span class="badge red">6%</span></td><td><span class="badge red">Hard</span></td><td><button class="chart-btn" onclick="showChart(event,'overall-loss-6')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">📅 Min Trading Days</div></td><td><span class="badge yellow">2 days</span></td><td><span class="badge muted">N/A</span></td><td><span class="badge yellow">Soft</span></td><td><button class="chart-btn" onclick="showChart(event,'min-days')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">📰 News Trading</div><div class="rule-desc">Allowed — no blackout windows</div></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td><td></td></tr>
+        <tr><td><div class="rule-name">🌙 Weekend Holding</div></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td><td></td></tr>
+        <tr><td><div class="rule-name">🔁 Risk / Trade Idea</div></td><td><span class="badge muted">N/A</span></td><td><span class="badge red">2%</span></td><td><span class="badge red">Hard</span></td><td><button class="chart-btn" onclick="showChart(event,'risk-per-trade')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">📊 Consistency</div></td><td><span class="badge muted">N/A</span></td><td><span class="badge yellow">≤ 15%</span></td><td><span class="badge yellow">Payout Gate</span></td><td><button class="chart-btn" onclick="showChart(event,'consistency')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="section-label">Leverage by Instrument (Prime — 30:1 max)</div>
+  <div class="leverage-chips">
+    <div class="leverage-chip"><span class="asset">Forex Majors & Minors</span><span class="ratio">30:1</span></div>
+    <div class="leverage-chip"><span class="asset">Forex Exotics</span><span class="ratio">5:1</span></div>
+    <div class="leverage-chip"><span class="asset">Metals</span><span class="ratio">10:1</span></div>
+    <div class="leverage-chip"><span class="asset">Commodities</span><span class="ratio">2:1</span></div>
+    <div class="leverage-chip"><span class="asset">Indices</span><span class="ratio">5:1</span></div>
+    <div class="leverage-chip"><span class="asset">Crypto</span><span class="ratio">1:1</span></div>
+  </div>
+</div>
+
+<!-- ═══════════ PRIME 2-STEP ═══════════ -->
+<div id="panel-prime2" class="panel">
+  <div class="kpi-strip">
+    <div class="kpi-card"><div class="kpi-label">Phase 1 Target</div><div class="kpi-value accent">8%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Phase 2 Target</div><div class="kpi-value accent">5%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Max Daily Loss</div><div class="kpi-value red">5%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Max Overall Loss</div><div class="kpi-value red">8%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Min Trading Days</div><div class="kpi-value yellow">3</div><div class="kpi-sub">Per phase</div></div>
+    <div class="kpi-card"><div class="kpi-label">Time Limit</div><div class="kpi-value green">None</div></div>
+    <div class="kpi-card"><div class="kpi-label">Profit Split</div><div class="kpi-value accent">95%</div></div>
+    <div class="kpi-card"><div class="kpi-label">News Trading</div><div class="kpi-value green">✓</div><div class="kpi-sub">Allowed</div></div>
+  </div>
+  <div class="section-label">Evaluation Objectives</div>
+  <div class="rules-table-wrap">
+    <table>
+      <thead><tr><th style="width:30%">Rule</th><th>Phase 1</th><th>Phase 2</th><th>Funded</th><th>Breach</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><div class="rule-name">📈 Profit Target</div></td><td><span class="badge accent">8%</span></td><td><span class="badge accent">5%</span></td><td><span class="badge muted">None</span></td><td>—</td><td><button class="chart-btn" onclick="showChart(event,'profit-target-2step')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">📉 Daily Loss</div></td><td><span class="badge red">5%</span></td><td><span class="badge red">5%</span></td><td><span class="badge red">5%</span></td><td><span class="badge red">Hard</span></td><td><button class="chart-btn" onclick="showChart(event,'daily-loss')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">🔻 Overall Loss</div></td><td><span class="badge red">8%</span></td><td><span class="badge red">8%</span></td><td><span class="badge red">8%</span></td><td><span class="badge red">Hard</span></td><td><button class="chart-btn" onclick="showChart(event,'overall-loss-8')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">📅 Min Days</div></td><td><span class="badge yellow">3</span></td><td><span class="badge yellow">3</span></td><td><span class="badge muted">N/A</span></td><td><span class="badge yellow">Soft</span></td><td><button class="chart-btn" onclick="showChart(event,'min-days')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">🔁 Risk / Trade Idea</div></td><td>—</td><td>—</td><td><span class="badge red">2%</span></td><td><span class="badge red">Hard</span></td><td><button class="chart-btn" onclick="showChart(event,'risk-per-trade')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">📰 News Trading</div></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td><td></td></tr>
+        <tr><td><div class="rule-name">🌙 Weekend Holding</div></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════ PRIME 3-STEP ═══════════ -->
+<div id="panel-prime3" class="panel">
+  <div class="kpi-strip">
+    <div class="kpi-card"><div class="kpi-label">Ph 1 Target</div><div class="kpi-value accent">5%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Ph 2 Target</div><div class="kpi-value accent">5%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Ph 3 Target</div><div class="kpi-value accent">5%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Max Daily Loss</div><div class="kpi-value red">5%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Max Overall Loss</div><div class="kpi-value red">10%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Min Days</div><div class="kpi-value yellow">3</div><div class="kpi-sub">Per phase</div></div>
+    <div class="kpi-card"><div class="kpi-label">Time Limit</div><div class="kpi-value green">None</div></div>
+    <div class="kpi-card"><div class="kpi-label">Profit Split</div><div class="kpi-value accent">95%</div></div>
+  </div>
+  <div class="section-label">Evaluation Objectives</div>
+  <div class="rules-table-wrap">
+    <table>
+      <thead><tr><th style="width:26%">Rule</th><th>Phase 1</th><th>Phase 2</th><th>Phase 3</th><th>Funded</th><th>Breach</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><div class="rule-name">📈 Profit Target</div></td><td><span class="badge accent">5%</span></td><td><span class="badge accent">5%</span></td><td><span class="badge accent">5%</span></td><td><span class="badge muted">None</span></td><td>—</td><td><button class="chart-btn" onclick="showChart(event,'profit-target-3step')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">📉 Daily Loss</div></td><td><span class="badge red">5%</span></td><td><span class="badge red">5%</span></td><td><span class="badge red">5%</span></td><td><span class="badge red">5%</span></td><td><span class="badge red">Hard</span></td><td><button class="chart-btn" onclick="showChart(event,'daily-loss')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">🔻 Overall Loss</div></td><td><span class="badge red">10%</span></td><td><span class="badge red">10%</span></td><td><span class="badge red">10%</span></td><td><span class="badge red">10%</span></td><td><span class="badge red">Hard</span></td><td><button class="chart-btn" onclick="showChart(event,'overall-loss-10')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">📅 Min Days</div></td><td><span class="badge yellow">3</span></td><td><span class="badge yellow">3</span></td><td><span class="badge yellow">3</span></td><td>—</td><td><span class="badge yellow">Soft</span></td><td></td></tr>
+        <tr><td><div class="rule-name">📰 News Trading</div></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td><td></td></tr>
+        <tr><td><div class="rule-name">🌙 Weekend Hold</div></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════ DIRECT ACCOUNT ═══════════ -->
+<div id="panel-direct" class="panel">
+  <div class="kpi-strip">
+    <div class="kpi-card"><div class="kpi-label">Evaluation</div><div class="kpi-value green">Skip</div><div class="kpi-sub">Direct funding</div></div>
+    <div class="kpi-card"><div class="kpi-label">Max Daily Loss</div><div class="kpi-value red">3%</div><div class="kpi-sub">Tighter limit</div></div>
+    <div class="kpi-card"><div class="kpi-label">Max Overall Loss</div><div class="kpi-value red">6%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Risk / Trade</div><div class="kpi-value red">2%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Profit Split</div><div class="kpi-value accent">80%</div><div class="kpi-sub">+10% add-on</div></div>
+    <div class="kpi-card"><div class="kpi-label">Payout Speed</div><div class="kpi-value green">1hr</div></div>
+    <div class="kpi-card"><div class="kpi-label">Inactivity</div><div class="kpi-value red">30</div><div class="kpi-sub">Days max</div></div>
+  </div>
+  <div class="section-label">Account Rules</div>
+  <div class="rules-table-wrap">
+    <table>
+      <thead><tr><th style="width:44%">Rule</th><th>Value</th><th>Breach</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><div class="rule-name">📉 Max Daily Loss</div><div class="rule-desc">From previous day's closing balance</div></td><td><span class="badge red">3%</span></td><td><span class="badge red">Hard</span></td><td><button class="chart-btn" onclick="showChart(event,'daily-loss-direct')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">🔻 Max Overall Loss</div><div class="rule-desc">Balance cannot fall below initial balance minus 6%</div></td><td><span class="badge red">6%</span></td><td><span class="badge red">Hard</span></td><td><button class="chart-btn" onclick="showChart(event,'overall-loss-6')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">🔁 Risk / Trade Idea</div><div class="rule-desc">Re-entry in same direction within 10 min counts as same idea</div></td><td><span class="badge red">2%</span></td><td><span class="badge red">Hard</span></td><td><button class="chart-btn" onclick="showChart(event,'risk-per-trade')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">📊 Consistency Rule</div><div class="rule-desc">Best day profit ÷ total profit must stay ≤ 15%</div></td><td><span class="badge yellow">≤ 15%</span></td><td><span class="badge yellow">Payout Gate</span></td><td><button class="chart-btn" onclick="showChart(event,'consistency')"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></button></td></tr>
+        <tr><td><div class="rule-name">💤 Inactivity</div><div class="rule-desc">No trade opened or closed for 30 consecutive days</div></td><td><span class="badge red">30 days</span></td><td><span class="badge red">Suspension</span></td><td></td></tr>
+        <tr><td><div class="rule-name">💰 Profit Split</div></td><td><span class="badge accent">80% + add-on</span></td><td>—</td><td></td></tr>
+        <tr><td><div class="rule-name">⚡ Payout Speed</div></td><td><span class="badge green">1 Hour</span></td><td>—</td><td></td></tr>
+        <tr><td><div class="rule-name">📅 Payout Frequency</div></td><td>Every 14 days</td><td>—</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════ PROHIBITED — always visible ═══════════ -->
+<div class="section-label" style="margin-top:8px">Prohibited Practices — All Accounts</div>
+<div class="prohibited-list">
+  <div class="prohibited-item"><div class="icon-wrap">🚫</div><div class="text"><strong>Hedging</strong><span>Opening opposing positions to artificially offset risk across accounts</span></div></div>
+  <div class="prohibited-item"><div class="icon-wrap">⚡</div><div class="text"><strong>High-Frequency Overactivity</strong><span>Placing trades in rapid succession or constantly modifying orders</span></div></div>
+  <div class="prohibited-item"><div class="icon-wrap">🎰</div><div class="text"><strong>Gambling Behaviour</strong><span>Oversized positions clearly inconsistent with your other trades</span></div></div>
+  <div class="prohibited-item"><div class="icon-wrap">🔓</div><div class="text"><strong>Arbitrage / Latency Exploit</strong><span>Exploiting price feed delays or using latency arbitrage strategies</span></div></div>
+  <div class="prohibited-item"><div class="icon-wrap">📋</div><div class="text"><strong>External Copy Trading</strong><span>Copying trades from accounts outside your own Hola Prime profile</span></div></div>
+  <div class="prohibited-item"><div class="icon-wrap">🤖</div><div class="text"><strong>Shared / Pooled EAs</strong><span>EAs shared across multiple traders — combined capital limits apply</span></div></div>
+  <div class="prohibited-item"><div class="icon-wrap">🕳️</div><div class="text"><strong>Gap Trading</strong><span>Intentionally exploiting price gaps during major news or earnings</span></div></div>
+  <div class="prohibited-item"><div class="icon-wrap">📈</div><div class="text"><strong>Unreplicable Strategies</strong><span>Strategies no reasonable trader would use with their own real money</span></div></div>
+</div>
+
+<!-- CONSEQUENCE LADDER -->
+<div class="section-label">Consequence Ladder</div>
+<div class="consequence-strip">
+  <div class="consequence-item"><div class="cicon">⚠️</div><div class="clabel">Warning</div></div>
+  <div class="consequence-item"><div class="cicon">🔒</div><div class="clabel">Trade Restrictions</div></div>
+  <div class="consequence-item"><div class="cicon">📉</div><div class="clabel">Tighter Limits</div></div>
+  <div class="consequence-item"><div class="cicon">❌</div><div class="clabel">Trades Nullified</div></div>
+  <div class="consequence-item"><div class="cicon">🚫</div><div class="clabel">Permanent Ban</div></div>
+</div>
+
+<div class="footnote"><strong>Note:</strong> All figures apply to simulated trading accounts. Hola Prime does not act as a broker. A "trading day" = any calendar day with at least one opened or closed trade. Re-entering the same direction within 10 minutes of closing a losing trade counts as the same trade idea for the 2% risk rule. Leverage and margin requirements may be updated at any time.</div>
+
+</div><!-- /content -->
+
+<!-- ═══════════ CHART POPUP ═══════════ -->
+<div id="chartPopup" class="chart-popup">
+  <h4 id="chartTitle"></h4>
+  <div id="chartDesc" class="chart-desc"></div>
+  <canvas id="chartCanvas" height="160"></canvas>
+  <div id="chartLegend" class="chart-legend"></div>
+</div>
+
+<script>
+/* ─── Tab switching ─── */
+const panels = ['pro1','pro2','prime1','prime2','prime3','direct'];
+function switchTab(key) {
+  panels.forEach(id => {
+    const p = document.getElementById('panel-'+id);
+    if (p) p.classList.remove('active');
+  });
+  const target = document.getElementById('panel-'+key);
+  if (target) target.classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', panels[i] === key);
+  });
+}
+
+/* ─── Chart definitions ─── */
+const CHARTS = {
+  'daily-loss': {
+    title: 'Max Daily Loss — 5%',
+    desc: 'The most you can lose in a single trading day, measured from the previous day\'s closing balance.',
+    type: 'bar',
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+    datasets: [
+      { label: 'Daily P&L (%)', data: [1.2, 0.8, -5.2, 1.5, 0.9], colors: ['#00e5a0','#00e5a0','#ff4d6a','#00e5a0','#00e5a0'] }
+    ],
+    limitLine: { value: -5, label: '−5% Limit', color: '#ff4d6a' },
+    legend: [{ color: '#00e5a0', label: 'Safe day' }, { color: '#ff4d6a', label: 'BREACH on Wed' }]
+  },
+  'daily-loss-direct': {
+    title: 'Max Daily Loss — 3%',
+    desc: 'Direct accounts have a tighter 3% daily loss limit from the previous day\'s closing balance.',
+    type: 'bar',
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+    datasets: [
+      { label: 'Daily P&L (%)', data: [0.8, -1.2, -3.4, 1.1, 0.5], colors: ['#00e5a0','#00e5a0','#ff4d6a','#00e5a0','#00e5a0'] }
+    ],
+    limitLine: { value: -3, label: '−3% Limit', color: '#ff4d6a' },
+    legend: [{ color: '#00e5a0', label: 'Safe day' }, { color: '#ff4d6a', label: 'BREACH on Wed' }]
+  },
+  'overall-loss-6': {
+    title: 'Max Overall Loss — 6%',
+    desc: 'Your account balance (or equity) can never fall more than 6% below the initial balance. This is a fixed floor.',
+    type: 'line',
+    labels: ['Start','Day 2','Day 4','Day 6','Day 8','Day 10','Day 12'],
+    datasets: [
+      { label: 'Account Balance', data: [10000, 9850, 9700, 9450, 9600, 9800, 10100], color: '#00c8ff' }
+    ],
+    limitLine: { value: 9400, label: 'FLOOR $9,400 (−6%)', color: '#ff4d6a' },
+    legend: [{ color: '#00c8ff', label: 'Account balance' }, { color: '#ff4d6a', label: '6% floor — never breach' }],
+    isDollar: true, startBalance: 10000
+  },
+  'overall-loss-8': {
+    title: 'Max Overall Loss — 8%',
+    desc: 'Your balance can never fall below the initial balance minus 8%. This is a static floor that never moves.',
+    type: 'line',
+    labels: ['Start','Day 2','Day 4','Day 6','Day 8','Day 10','Day 12'],
+    datasets: [
+      { label: 'Account Balance', data: [10000, 9750, 9500, 9350, 9500, 9700, 10050], color: '#00c8ff' }
+    ],
+    limitLine: { value: 9200, label: 'FLOOR $9,200 (−8%)', color: '#ff4d6a' },
+    legend: [{ color: '#00c8ff', label: 'Account balance' }, { color: '#ff4d6a', label: '8% floor' }],
+    isDollar: true, startBalance: 10000
+  },
+  'overall-loss-10': {
+    title: 'Max Overall Loss — 10%',
+    desc: 'Prime 3-Step gives a wider 10% drawdown buffer. Your balance can never fall below initial minus 10%.',
+    type: 'line',
+    labels: ['Start','Day 2','Day 4','Day 6','Day 8','Day 10','Day 12'],
+    datasets: [
+      { label: 'Account Balance', data: [10000, 9600, 9200, 9050, 9300, 9600, 10200], color: '#00c8ff' }
+    ],
+    limitLine: { value: 9000, label: 'FLOOR $9,000 (−10%)', color: '#ff4d6a' },
+    legend: [{ color: '#00c8ff', label: 'Account balance' }, { color: '#ff4d6a', label: '10% floor' }],
+    isDollar: true, startBalance: 10000
+  },
+  'profit-target-1step': {
+    title: 'Profit Target — 10%',
+    desc: 'Reach a net profit of 10% on your starting balance to pass Phase 1 and unlock your funded account.',
+    type: 'line',
+    labels: ['Start','Day 3','Day 6','Day 9','Day 12','Day 15','Passed'],
+    datasets: [
+      { label: 'Account Balance', data: [10000, 10200, 10450, 10600, 10750, 10900, 11000], color: '#00e5a0' }
+    ],
+    limitLine: { value: 11000, label: 'TARGET $11,000 (+10%)', color: '#00e5a0' },
+    legend: [{ color: '#00e5a0', label: 'Balance growth' }, { color: '#00c8ff', label: '10% target line' }],
+    isDollar: true, startBalance: 10000, isTarget: true
+  },
+  'profit-target-2step': {
+    title: 'Profit Target — Phase 1: 8%, Phase 2: 5%',
+    desc: 'Reach 8% in Phase 1, then 5% in Phase 2 to qualify for funding.',
+    type: 'bar',
+    labels: ['Phase 1\nTarget', 'Phase 1\nAchieved', 'Phase 2\nTarget', 'Phase 2\nAchieved'],
+    datasets: [
+      { label: 'Target %', data: [8, 0, 5, 0], colors: ['rgba(0,200,255,0.2)','transparent','rgba(0,200,255,0.2)','transparent'] },
+      { label: 'Achieved %', data: [0, 9.2, 0, 5.8], colors: ['transparent','#00e5a0','transparent','#00e5a0'] }
+    ],
+    legend: [{ color: 'rgba(0,200,255,0.4)', label: 'Required target' }, { color: '#00e5a0', label: 'Achieved (example)' }]
+  },
+  'profit-target-3step': {
+    title: 'Profit Target — 5% Each Phase',
+    desc: 'Each of the three phases requires a 5% profit target. Consistent, measured progress.',
+    type: 'bar',
+    labels: ['Phase 1', 'Phase 2', 'Phase 3'],
+    datasets: [
+      { label: 'Target', data: [5, 5, 5], colors: ['rgba(0,200,255,0.25)','rgba(0,200,255,0.25)','rgba(0,200,255,0.25)'] },
+      { label: 'Example Result', data: [6.1, 5.4, 5.8], colors: ['#00e5a0','#00e5a0','#00e5a0'] }
+    ],
+    legend: [{ color: 'rgba(0,200,255,0.5)', label: '5% target each phase' }, { color: '#00e5a0', label: 'Example result' }]
+  },
+  'risk-per-trade': {
+    title: 'Max Risk Per Trade Idea — 2%',
+    desc: 'On your funded account, no single trade idea (or correlated group) can risk more than 2% of the account balance. Re-entering the same direction within 10 minutes counts as one idea.',
+    type: 'riskVisual',
+    legend: [{ color: '#00e5a0', label: '$200 risk — OK' }, { color: '#ff4d6a', label: '$500 risk — BREACH' }]
+  },
+  'min-days': {
+    title: 'Minimum Trading Days',
+    desc: 'You must open or close at least one trade on the required number of distinct calendar days before claiming the profit target.',
+    type: 'calendar',
+    legend: [{ color: '#00e5a0', label: 'Active trading day' }, { color: 'rgba(0,200,255,0.15)', label: 'No trade' }]
+  },
+  'consistency': {
+    title: 'Consistency Rule — ≤ 15% Best Day',
+    desc: 'To be eligible for payouts, your single best day\'s profit must not exceed 15% of your total profit. This ensures consistent trading rather than one lucky spike.',
+    type: 'consistency',
+    legend: [{ color: '#00e5a0', label: 'Compliant (each day ≤ 15%)' }, { color: '#ff4d6a', label: 'Violation (one day > 15%)' }]
+  }
+};
+
+/* ─── Canvas chart renderer ─── */
+let currentPopup = null;
+
+function showChart(e, key) {
+  e.stopPropagation();
+  const popup = document.getElementById('chartPopup');
+  const def = CHARTS[key];
+  if (!def) return;
+
+  document.getElementById('chartTitle').textContent = def.title;
+  document.getElementById('chartDesc').textContent = def.desc;
+
+  // Position popup
+  const btn = e.currentTarget;
+  const rect = btn.getBoundingClientRect();
+  const pw = 340;
+  let left = rect.left - pw - 10;
+  if (left < 10) left = rect.right + 10;
+  let top = rect.top - 20;
+  const maxTop = window.innerHeight - 340;
+  if (top > maxTop) top = maxTop;
+  if (top < 10) top = 10;
+
+  popup.style.left = left + 'px';
+  popup.style.top = top + 'px';
+  popup.classList.add('visible');
+  currentPopup = popup;
+
+  // Render chart
+  const canvas = document.getElementById('chartCanvas');
+  renderChart(canvas, def);
+
+  // Legend
+  const legendEl = document.getElementById('chartLegend');
+  legendEl.innerHTML = (def.legend || []).map(l =>
+    `<div class="chart-legend-item"><div class="chart-legend-dot" style="background:${l.color}"></div>${l.label}</div>`
+  ).join('');
+}
+
+function renderChart(canvas, def) {
+  const dpr = window.devicePixelRatio || 1;
+  const W = 300, H = 160;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+
+  const PAD = { top: 14, right: 14, bottom: 28, left: def.isDollar ? 54 : 32 };
+  const cW = W - PAD.left - PAD.right;
+  const cH = H - PAD.top - PAD.bottom;
+
+  if (def.type === 'riskVisual') { renderRiskVisual(ctx, W, H); return; }
+  if (def.type === 'calendar') { renderCalendar(ctx, W, H); return; }
+  if (def.type === 'consistency') { renderConsistency(ctx, W, H); return; }
+
+  // Compute data range
+  const allData = def.datasets.flatMap(d => d.data.filter(v => v !== 0 || def.type === 'bar'));
+  let minV = Math.min(...allData);
+  let maxV = Math.max(...allData);
+  if (def.limitLine) { minV = Math.min(minV, def.limitLine.value); maxV = Math.max(maxV, def.limitLine.value); }
+  const pad = (maxV - minV) * 0.15 || 1;
+  minV -= pad; maxV += pad;
+
+  const scaleY = v => PAD.top + cH - ((v - minV) / (maxV - minV)) * cH;
+  const labels = def.labels;
+  const n = labels.length;
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(0,200,255,0.06)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = PAD.top + (cH / 4) * i;
+    ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(PAD.left + cW, y); ctx.stroke();
+    const val = maxV - ((maxV - minV) / 4) * i;
+    ctx.fillStyle = 'rgba(90,122,153,0.8)';
+    ctx.font = `400 9px Inter, sans-serif`;
+    ctx.textAlign = 'right';
+    ctx.fillText(def.isDollar ? '$' + Math.round(val / 100) * 100 : val.toFixed(1) + '%', PAD.left - 3, y + 3);
+  }
+
+  // Zero line if data crosses zero
+  if (minV < 0 && maxV > 0) {
+    const y0 = scaleY(0);
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(PAD.left, y0); ctx.lineTo(PAD.left + cW, y0); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Limit line
+  if (def.limitLine) {
+    const ly = scaleY(def.limitLine.value);
+    ctx.strokeStyle = def.limitLine.color;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath(); ctx.moveTo(PAD.left, ly); ctx.lineTo(PAD.left + cW, ly); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = def.limitLine.color;
+    ctx.font = `700 9px Inter, sans-serif`;
+    ctx.textAlign = 'right';
+    ctx.fillText(def.limitLine.label, PAD.left + cW, ly - 4);
+  }
+
+  // X labels
+  ctx.fillStyle = 'rgba(90,122,153,0.9)';
+  ctx.font = `400 9px Inter, sans-serif`;
+  ctx.textAlign = 'center';
+  const xStep = cW / (n - 1);
+  labels.forEach((lbl, i) => {
+    const x = PAD.left + i * xStep;
+    ctx.fillText(lbl, x, H - 6);
+  });
+
+  // Draw datasets
+  def.datasets.forEach(ds => {
+    if (def.type === 'bar') {
+      const barW = cW / n * 0.55;
+      ds.data.forEach((v, i) => {
+        if (v === 0) return;
+        const x = PAD.left + (cW / n) * i + (cW / n) * 0.22;
+        const y0 = scaleY(0);
+        const yV = scaleY(v);
+        const color = Array.isArray(ds.colors) ? ds.colors[i] : ds.color;
+        if (!color || color === 'transparent') return;
+        ctx.fillStyle = color;
+        const ry = Math.min(y0, yV), rh = Math.abs(yV - y0);
+        // Rounded top bars
+        ctx.beginPath();
+        const r = Math.min(3, rh / 2);
+        if (v > 0) {
+          ctx.moveTo(x + r, ry); ctx.lineTo(x + barW - r, ry);
+          ctx.quadraticCurveTo(x + barW, ry, x + barW, ry + r);
+          ctx.lineTo(x + barW, ry + rh); ctx.lineTo(x, ry + rh);
+          ctx.lineTo(x, ry + r); ctx.quadraticCurveTo(x, ry, x + r, ry);
+        } else {
+          ctx.moveTo(x, ry); ctx.lineTo(x + barW, ry);
+          ctx.lineTo(x + barW, ry + rh - r); ctx.quadraticCurveTo(x + barW, ry + rh, x + barW - r, ry + rh);
+          ctx.lineTo(x + r, ry + rh); ctx.quadraticCurveTo(x, ry + rh, x, ry + rh - r);
+        }
+        ctx.closePath(); ctx.fill();
+      });
+    } else if (def.type === 'line') {
+      const xStep = cW / (n - 1);
+      const pts = ds.data.map((v, i) => ({ x: PAD.left + i * xStep, y: scaleY(v) }));
+
+      // Gradient fill
+      const grad = ctx.createLinearGradient(0, PAD.top, 0, PAD.top + cH);
+      grad.addColorStop(0, (ds.color || '#00c8ff') + '30');
+      grad.addColorStop(1, (ds.color || '#00c8ff') + '00');
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, PAD.top + cH);
+      pts.forEach(p => ctx.lineTo(p.x, p.y));
+      ctx.lineTo(pts[pts.length-1].x, PAD.top + cH);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Line
+      ctx.beginPath();
+      ctx.strokeStyle = ds.color || '#00c8ff';
+      ctx.lineWidth = 2;
+      ctx.lineJoin = 'round';
+      pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+      ctx.stroke();
+
+      // Dots
+      pts.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = ds.color || '#00c8ff';
+        ctx.fill();
+      });
+    }
+  });
+}
+
+function renderRiskVisual(ctx, W, H) {
+  const balance = 10000;
+  const maxRisk = balance * 0.02; // 2% = $200
+
+  // Background bar — total balance
+  ctx.fillStyle = 'rgba(0,200,255,0.08)';
+  roundRect(ctx, 20, 18, W - 40, 30, 6); ctx.fill();
+  ctx.fillStyle = 'rgba(0,200,255,0.5)';
+  ctx.font = `700 10px Inter, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText('TOTAL ACCOUNT BALANCE — $10,000', W/2, 38);
+
+  // Safe trade bar
+  const safeW = (200 / balance) * (W - 40);
+  ctx.fillStyle = 'rgba(0,229,160,0.15)';
+  roundRect(ctx, 20, 62, safeW, 26, 5); ctx.fill();
+  ctx.strokeStyle = '#00e5a0'; ctx.lineWidth = 1.5;
+  roundRect(ctx, 20, 62, safeW, 26, 5); ctx.stroke();
+  ctx.fillStyle = '#00e5a0'; ctx.font = `700 10px Inter, sans-serif`; ctx.textAlign = 'left';
+  ctx.fillText('2% MAX — $200', 26, 79);
+
+  // Labels
+  ctx.fillStyle = '#00e5a0'; ctx.font = `400 10px Inter, sans-serif`;
+  ctx.fillText('$200 risk — OK ✓', 20, 108);
+
+  ctx.fillStyle = '#ff4d6a';
+  ctx.fillText('$500 risk — BREACH ✗', 20, 124);
+
+  // Breach indicator bar
+  const breachW = (500 / balance) * (W - 40);
+  ctx.fillStyle = 'rgba(255,77,106,0.12)';
+  roundRect(ctx, 20, 130, breachW, 18, 4); ctx.fill();
+  ctx.strokeStyle = '#ff4d6a'; ctx.lineWidth = 1;
+  roundRect(ctx, 20, 130, breachW, 18, 4); ctx.stroke();
+
+  ctx.fillStyle = 'rgba(90,122,153,0.8)'; ctx.font = `400 9px Inter, sans-serif`;
+  ctx.textAlign = 'right';
+  ctx.fillText('Re-entry within 10 min = same trade idea', W - 20, H - 4);
+}
+
+function renderCalendar(ctx, W, H) {
+  const days = ['Mon','Tue','Wed','Thu','Fri'];
+  const traded = [false, true, false, true, false];
+  const cellW = (W - 40) / 5;
+  const cellH = 46;
+  const startX = 20, startY = 22;
+
+  days.forEach((d, i) => {
+    const x = startX + i * cellW;
+    ctx.fillStyle = traded[i] ? 'rgba(0,229,160,0.15)' : 'rgba(0,200,255,0.06)';
+    roundRect(ctx, x + 3, startY, cellW - 6, cellH, 7); ctx.fill();
+    if (traded[i]) {
+      ctx.strokeStyle = '#00e5a0'; ctx.lineWidth = 1.5;
+      roundRect(ctx, x + 3, startY, cellW - 6, cellH, 7); ctx.stroke();
+    }
+    ctx.fillStyle = traded[i] ? '#00e5a0' : '#5a7a99';
+    ctx.font = `700 10px Inter, sans-serif`; ctx.textAlign = 'center';
+    ctx.fillText(d, x + cellW/2, startY + 18);
+    if (traded[i]) {
+      ctx.fillStyle = '#00e5a0'; ctx.font = `400 9px Inter, sans-serif`;
+      ctx.fillText('Active', x + cellW/2, startY + 34);
+    } else {
+      ctx.fillStyle = '#5a7a99'; ctx.font = `400 9px Inter, sans-serif`;
+      ctx.fillText('No trade', x + cellW/2, startY + 34);
+    }
+  });
+
+  ctx.fillStyle = '#00e5a0'; ctx.font = `700 11px Inter, sans-serif`; ctx.textAlign = 'center';
+  ctx.fillText('2 active days ✓ — minimum met', W/2, startY + cellH + 22);
+  ctx.fillStyle = '#5a7a99'; ctx.font = `400 10px Inter, sans-serif`;
+  ctx.fillText('Each challenge has its own minimum day requirement', W/2, startY + cellH + 38);
+}
+
+function renderConsistency(ctx, W, H) {
+  const days = ['Mon','Tue','Wed','Thu','Fri'];
+  const profits = [120, 90, 60, 110, 80];
+  const total = profits.reduce((a,b) => a+b, 0);
+  const best = Math.max(...profits);
+  const pct = profits.map(p => ((p/total)*100).toFixed(0));
+  const bestIdx = profits.indexOf(best);
+  const limit = total * 0.15;
+
+  const maxBar = 100;
+  const barH = 90;
+  const barW = (W - 50) / days.length;
+  const startX = 30;
+
+  // bars
+  days.forEach((d, i) => {
+    const h = (profits[i] / best) * barH;
+    const x = startX + i * barW + 4;
+    const y = H - 46 - h;
+    const isOver = profits[i] > limit;
+    ctx.fillStyle = isOver ? 'rgba(255,77,106,0.18)' : 'rgba(0,229,160,0.15)';
+    roundRect(ctx, x, y, barW - 8, h, 5); ctx.fill();
+    ctx.strokeStyle = isOver ? '#ff4d6a' : '#00e5a0';
+    ctx.lineWidth = 1.5;
+    roundRect(ctx, x, y, barW - 8, h, 5); ctx.stroke();
+
+    ctx.fillStyle = isOver ? '#ff4d6a' : '#00e5a0';
+    ctx.font = `700 9px Inter, sans-serif`; ctx.textAlign = 'center';
+    ctx.fillText(pct[i]+'%', x + (barW-8)/2, y - 5);
+
+    ctx.fillStyle = '#5a7a99'; ctx.font = `400 9px Inter, sans-serif`;
+    ctx.fillText(d, x + (barW-8)/2, H - 32);
+    ctx.fillText('$'+profits[i], x + (barW-8)/2, H - 20);
+  });
+
+  // 15% limit line
+  const limitH = (limit / best) * barH;
+  const ly = H - 46 - limitH;
+  ctx.strokeStyle = '#ffb74d'; ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(startX, ly); ctx.lineTo(W - 10, ly); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#ffb74d'; ctx.font = `700 9px Inter, sans-serif`; ctx.textAlign = 'right';
+  ctx.fillText('15% limit', W - 12, ly - 4);
+
+  ctx.fillStyle = '#5a7a99'; ctx.font = `400 9px Inter, sans-serif`; ctx.textAlign = 'left';
+  ctx.fillText('Total profit: $' + total, startX, H - 5);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+// Close popup on outside click
+document.addEventListener('click', () => {
+  if (currentPopup) {
+    currentPopup.classList.remove('visible');
+    currentPopup = null;
+  }
+});
+</script>
+</body>
+</html>
